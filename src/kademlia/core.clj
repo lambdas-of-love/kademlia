@@ -20,19 +20,20 @@
                                          :message [the message contents]}"
   [socket msg]
   (let [{:keys [host port message]} msg
-        parsed-message              (nippy/thaw message)
+        parsed-message              (try (nippy/thaw message) (catch Exception e {:type :invalid-data}))
         respond!                    (partial send! socket host port)]
     
     (case (:type parsed-message)
-      :ping (respond! {:type :ack})
-      (respond! "I don't understand what you just sent.")
+      :ping         (respond! {:type :ack})
+      :invalid-data (respond! "hai!")
+      (respond! "Invalid message type")
       )))
 
 
 
 
 (defn -main [& args]
-  (util/with-stream [socket (util/bind-socket #'recv-handler)]
+  (let [socket (util/bind-socket #'recv-handler)]
     (println "listening for messages on port" (util/socket->port socket))
     
     ;; We can do stuff here like initiate a conversation with another node!
