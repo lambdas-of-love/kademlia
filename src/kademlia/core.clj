@@ -8,6 +8,7 @@
 (def port 1665)
 (def bind-timeout 5000) ;; milliseconds
 
+(defn timeout [] (throw (new Exception "timeout!!!")))
 (defn uuid []
   (java.util.UUID/randomUUID))
 
@@ -39,10 +40,9 @@
 (defn bind-socket
   "Returns a deferred socket, all messages coming into the socket will be consumed by
    recv-handler. If port is 0 we will bind to an open port."
-  ([] (let [socket (deref (udp/socket {:port 0}) bind-timeout :timeout)]
-        (s/consume (partial #'recv-handler socket) socket)
-        socket) )
+  ([] (bind-socket 0))
   ([port] (let [socket (deref (udp/socket {:port port}) bind-timeout :timeout)]
+            (when (= :timeout socket) (timeout))
             (s/consume (partial #'recv-handler socket) socket)
             socket)))
 
