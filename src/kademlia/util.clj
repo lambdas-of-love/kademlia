@@ -11,7 +11,7 @@
     (.getPort (.localAddress socket))))
 
 (defmacro with-stream
-  "Shamelessly modified with-open only it works on deferred streams instead."
+  "Shamelessly modified with-open only it works on streams instead."
   [bindings & body]
   (cond
     (= (count bindings) 0) `(do ~@body)
