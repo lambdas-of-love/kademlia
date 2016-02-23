@@ -5,9 +5,14 @@ Practice implementation of the Kademlia DHT algorithm. https://en.wikipedia.org/
 
 ## Usage
 
-FIXME: explanation
+Run the application
+$ lein run
 
-    $ java -jar kademlia-0.1.0-standalone.jar [args]
+Run the tests
+$ lein test
+
+Launch a REPL
+$ lein repl
 
 ## License
 
