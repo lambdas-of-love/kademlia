@@ -5,14 +5,11 @@ Practice implementation of the Kademlia DHT algorithm. https://en.wikipedia.org/
 
 ## Usage
 
-Run the application
-  $ lein run
+Run the application `lein run`
 
-Run the tests
-  $ lein test
+Run the tests `lein test`
 
-Launch a REPL
-  $ lein repl
+Launch a REPL `lein repl`
 
 ## License
 
