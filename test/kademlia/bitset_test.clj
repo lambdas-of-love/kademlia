@@ -21,4 +21,13 @@
       (is (= empty-bitset (xor a a)))
       (is (not= empty-bitset (xor a b)))
       (is (not= a (xor a b)))
-      (is (not= b (xor a b))))))
+      (is (not= b (xor a b)))))
+
+  (testing "set-bit"
+    (is (= 1 (cardinality (set-bit empty-bitset 0 true)))))
+  
+  (testing "bitset->list"
+    (is (= (take 128 (repeat false))
+           (bitset->list empty-bitset)))
+    (is (= (concat [true] (take 127 (repeat false)))
+           (bitset->list (set-bit empty-bitset 0 true))))))

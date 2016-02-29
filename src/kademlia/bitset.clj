@@ -1,7 +1,7 @@
 (ns kademlia.bitset)
 
 (def empty-bitset
-  (java.util.BitSet/valueOf (long-array [0 0])))
+  (new java.util.BitSet 128))
 
 (defn uuid []
   (java.util.UUID/randomUUID))
@@ -42,6 +42,13 @@
   [bitset]
   (.cardinality bitset))
 
+(defn set-bit
+  "Set the bit at the index to true or false."
+  [bitset index bit]
+  (let [bitset (.clone bitset)]
+    (.set bitset index bit)
+    bitset))
+
 (defn bitset->list [bitset]
-  (for [i (range (.length bitset))]
+  (for [i (range 128)]
     (.get bitset i)))

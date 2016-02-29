@@ -21,18 +21,18 @@
 (defn calc-dist [my-id node]
   (bits/bitset->list (bits/xor (bits/uuid->bitset my-id) (bits/uuid->bitset (:id node)))))
 
-(defn add-to-routing-table
-  ;; Takes a routing table (list of lists) and a node
-  ;; Returns the new routing table with the node inserted
-  [routing-table node]
-  (add-impl routing-table (calc-dist my-id node)))
-
 (defn add-impl [routing-table distance-bit-list node]
        (let [first-bucket (first routing-table)
              first-bit (first distance-bit-list)]
          (if (false? first-bit)
            (conj (add-impl (rest routing-table) (rest distance-bit-list) node) first-bucket)
            (conj (rest routing-table) (conj first-bucket node)))))
+
+(defn add-to-routing-table
+  ;; Takes a routing table (list of lists) and a node
+  ;; Returns the new routing table with the node inserted
+  [routing-table node]
+  (add-impl routing-table (calc-dist my-id node)))
 
 ;;(add-to-routing-table @routing-table node)
 (defn recv-handler
