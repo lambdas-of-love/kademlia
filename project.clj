@@ -9,4 +9,5 @@
                  [com.taoensso/nippy "2.11.0-RC1"]]
   :main ^:skip-aot kademlia.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}}
+  :plugins [[lein-cloverage "1.0.6"]])
