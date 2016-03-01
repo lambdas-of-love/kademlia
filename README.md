@@ -1,5 +1,6 @@
 # kademlia
 [![Build Status](https://travis-ci.org/lambdas-of-love/kademlia.svg?branch=master)](https://travis-ci.org/lambdas-of-love/kademlia)
+[![Coverage Status](https://coveralls.io/repos/github/lambdas-of-love/kademlia/badge.svg?branch=master)](https://coveralls.io/github/lambdas-of-love/kademlia?branch=master)
 
 Practice implementation of the Kademlia DHT algorithm. https://en.wikipedia.org/wiki/Kademlia
 
