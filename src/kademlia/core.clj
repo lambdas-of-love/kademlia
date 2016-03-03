@@ -29,9 +29,6 @@
       (respond! "Invalid message type")
       )))
 
-
-
-
 (defn -main [& args]
   (let [socket (util/bind-socket #'recv-handler)]
     (println "listening for messages on port" (util/socket->port socket))
