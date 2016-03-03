@@ -4,8 +4,6 @@
             [kademlia.util :as util])
   (:gen-class))
 
-(def do-nothing nil)
-
 (defn send!
   "Returns a deferred that will eval to true if we successfully sent the message otherwise false."
   [socket host port msg]
