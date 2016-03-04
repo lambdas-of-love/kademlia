@@ -14,8 +14,7 @@
 
 
 (defn attempt-to-thaw-msg
-  "Returns the parsed serialized data, if we failed to parse it return nil.:
-  {:type :invalid-data}"
+  "Returns the parsed serialized data, if we failed to parse it return nil."
   [msg]
   (try
     (nippy/thaw msg)
