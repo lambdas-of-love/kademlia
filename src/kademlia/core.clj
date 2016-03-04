@@ -15,26 +15,20 @@
 
 (def my-id (bits/uuid))
 
-(def *routing-table*
-  (atom (take 128 (repeat '()))))
-
-(defn calc-dist [my-id node]
-  (bits/bitset->list (bits/xor (bits/uuid->bitset my-id) (bits/uuid->bitset (:id node)))))
-
-(defn add-impl [routing-table distance-bit-list node]
-       (let [first-bucket (first routing-table)
-             first-bit (first distance-bit-list)]
-         (if (false? first-bit)
-           (conj (add-impl (rest routing-table) (rest distance-bit-list) node) first-bucket)
-           (conj (rest routing-table) (conj first-bucket node)))))
+(def routing-table
+  (atom (take 128 (repeat []))))
 
 (defn add-to-routing-table
-  ;; Takes a routing table (list of lists) and a node
-  ;; Returns the new routing table with the node inserted
-  [routing-table node]
-  (add-impl routing-table (calc-dist my-id node)))
+  "Takes a routing table (list of lists),
+  a list of booleans representing the distance this node's id is from our id,
+  and a node, and returns an updated routing table with the node inserted in the correct location"
+  [routing-table distance-bit-list node]
+  (let [first-bucket (first routing-table)
+        first-bit (first distance-bit-list)]
+    (if (false? first-bit)
+      (conj (add-to-routing-table (rest routing-table) (rest distance-bit-list) node) first-bucket)
+      (conj (rest routing-table) (conj first-bucket node)))))
 
-;;(add-to-routing-table @routing-table node)
 (defn recv-handler
   "Handler for all incoming messages.
   * socket: the socket receiving the message, we can use this to send a message back.
