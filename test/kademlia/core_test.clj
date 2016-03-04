@@ -14,11 +14,9 @@
       (is (= {:type :ack}
              (nippy/thaw (:message @(s/take! test-socket))))))))
 
-(deftest add-impl-test
+(deftest add-to-routing-table-test
   (testing "With an empty routing table, we add nodes to the right place"
     (let [routing-table '(() ())]
-      (is (= [1 0] (map count (add-impl routing-table [true false] :node))))
-      (is (= [1 0] (map count (add-impl routing-table [true true] :node))))
-      (is (= [0 1] (map count (add-impl routing-table [false true] :node))))
-      ;; (is (= [1 0] (map count (add-impl routing-table [false false] :node))))
-    )))
+      (is (= [1 0] (map count (add-to-routing-table routing-table [true false] :node))))
+      (is (= [1 0] (map count (add-to-routing-table routing-table [true true] :node))))
+      (is (= [0 1] (map count (add-to-routing-table routing-table [false true] :node)))))))
