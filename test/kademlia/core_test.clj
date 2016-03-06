@@ -6,13 +6,65 @@
             [kademlia.util :as util]
             [kademlia.core :refer :all]))
 
+(def packet-response-timeout 500) ;; milliseconds
+
+(defn no-response? [stream]
+  (= :timeout
+     (deref (s/take! stream)
+            packet-response-timeout
+            :timeout)))
+
+(defn test-send!
+  "Given a test socket, and a socket that has been bound with a recv handler
+   send a message from the test socket to the socket with the handler"
+  [test-socket
+   socket-with-recv-handler
+   message]
+  @(send! test-socket
+          "localhost"
+          (util/socket->port socket-with-recv-handler)
+          message))
+
 (deftest ping-test
-  (testing "when we ping do we get an ack"
-    (util/with-stream [application-socket (util/bind-socket #'recv-handler)
-                       test-socket        @(udp/socket {:port 0})]
-      @(send! test-socket "localhost" (util/socket->port application-socket) {:type :ping})
+  (testing "do we timeout when binding to a port we shouldn't be able to bind to?"
+    (is (thrown? java.util.concurrent.TimeoutException
+                 (util/bind-socket #'recv-handler 1))))
+  
+  (testing "when we ping do we get an ack?"
+    (with-open [application-socket (util/bind-socket #'recv-handler)
+                test-socket        @(udp/socket {:port 0})]
+      
+      (test-send! test-socket application-socket {:type :ping})
+      
       (is (= {:type :ack}
-             (nippy/thaw (:message @(s/take! test-socket))))))))
+             (nippy/thaw (:message @(s/take! test-socket)))))))
+
+  (testing "when we send an unknown message type do we get no response?"
+    (with-open [application-socket (util/bind-socket #'recv-handler)
+                test-socket        @(udp/socket {:port 0})]
+
+      (test-send! test-socket application-socket {:type :NOTAREALMESSAGETYPE})
+
+      (is (no-response? test-socket))))
+  
+  (testing "when we send a message without a :type key do we explode?"
+    (with-open [application-socket (util/bind-socket #'recv-handler)
+                test-socket        @(udp/socket {:port 0})]
+
+      (test-send! test-socket application-socket {})
+
+      (is (no-response? test-socket))))
+  
+  (testing "when we send non valid data in the message field do we get no response?"
+    (with-open [application-socket (util/bind-socket #'recv-handler)
+                test-socket        @(udp/socket {:port 0})]
+      
+      @(s/put! test-socket {:host "localhost"
+                            :port (util/socket->port application-socket)
+                            :message "I'm not valid serialized data! :D"})
+      
+      (is (no-response? test-socket)))))
+
 
 (deftest add-impl-test
   (testing "With an empty routing table, we add nodes to the right place"
@@ -21,4 +73,5 @@
       (is (= [1 0] (map count (add-impl routing-table [true true] :node))))
       (is (= [0 1] (map count (add-impl routing-table [false true] :node))))
       ;; (is (= [1 0] (map count (add-impl routing-table [false false] :node))))
-    )))
+      )))
+
